@@ -32,6 +32,16 @@ def init():
 def clear():
     """Clear screen"""
     os.system('cls' if os.name == 'nt' else 'clear')
+    
+    
+def check_date():
+    """Checks date"""
+    while True:
+        try:
+            m, d, y = input('Enter date(MM/DD/YYYY):').split('/')
+            return datetime.datetime(year=int(y), month=int(m), day=int(d))
+        except ValueError:
+            print('Enter a valid date!')
 
 
 def check(prompt):
@@ -116,8 +126,7 @@ def edit(entry):
                                  entry.task,
                                  entry.time,
                                  entry.notes))
-    m, d, y = input('Enter date(MM/DD/YYYY):').split('/')
-    new_timestamp = datetime.datetime(year=int(y), month=int(m), day=int(d))
+    new_timestamp = check_date()
     new_name = check('name')
     new_task = check('task')
     new_time = check('time')
@@ -137,8 +146,7 @@ def search_entries(choice):
     clear()
     while True:
         if choice == 'a':
-            m, d, y = input('Search for date(MM/DD/YYYY):').split('/')
-            search_query = datetime.date(year=int(y), month=int(m), day=int(d))
+            search_query = check_date()
             entries = Entry.select().where(Entry.timestamp.contains(search_query))
             if not entries:
                 print('No record was found!')
@@ -146,10 +154,8 @@ def search_entries(choice):
             else:
                 result_menu(entries)
         if choice == 'b':
-            m, d, y = input('Start date(MM/DD/YYYY): ').split('/')
-            start = datetime.date(year=int(y), month=int(m), day=int(d))
-            m2, d2, y2 = input('End date(MM/DD/YYYY): ').split('/')
-            end = datetime.date(year=int(y2)+1, month=int(m2)+1, day=int(d2)+1)
+            start = check_date()
+            end = check_date()
             entries = Entry.select().where(Entry.timestamp.between(start, end))
             if not entries:
                 print('No record was found!')
