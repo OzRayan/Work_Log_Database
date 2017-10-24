@@ -153,6 +153,7 @@ def search_entries(choice):
                 break
             else:
                 result_menu(entries)
+                break
         if choice == 'b':
             start = check_date()
             end = check_date()
@@ -162,6 +163,7 @@ def search_entries(choice):
                 break
             else:
                 result_menu(entries)
+                break
         if choice == 'd':
             search_query = input('Search for task: ')
             entries = Entry.select().where(Entry.task.contains(search_query))
@@ -182,6 +184,7 @@ def search_entries(choice):
                 break
             else:
                 result_menu(entries)
+                break
         if choice == 'f':
             search_query = input('Search for notes: ')
             entries = Entry.select().where(Entry.notes.contains(search_query))
@@ -190,6 +193,7 @@ def search_entries(choice):
                 break
             else:
                 result_menu(entries)
+                break
 
 
 def name_list(search_query):
