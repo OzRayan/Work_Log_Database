@@ -324,6 +324,7 @@ def result_menu(entries):
         if action == 'd':
             # print(entries[index].id)
             clear()
+            print(entries[index].id)
             if input("Are you sure? [y/N] ").lower() == 'y':
                 entries[index].delete_instance()
                 # print(len(entries))
