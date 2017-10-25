@@ -172,6 +172,7 @@ def search_entries(choice):
                 break
             else:
                 result_menu(entries)
+                break
         if choice == 'c':
             search_query = input('Search for name: ')
             name_list(search_query)
