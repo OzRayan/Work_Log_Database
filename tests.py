@@ -27,6 +27,15 @@ class TestEntry(unittest.TestCase):
 
     def test_check(self):
         pass
+    
+    def test_get_option(self):
+        poz = 0
+        entry = 'entry'
+        self.assertEqual(work_log.get_option(poz, entry), ['[N]ext', '[E]dit', '[D]elete', '[R]eturn to menu'])
+        self.assertEqual(work_log.get_option_name(poz, entry), ['[N]ext', '[E]nter', '[R]eturn to menu'])
+        poz = len(entry) - 1
+        self.assertEqual(work_log.get_option(poz, entry), ['[P]revious', '[E]dit', '[D]elete', '[R]eturn to menu'])
+        self.assertEqual(work_log.get_option_name(poz, entry), ['[P]revious', '[E]nter', '[R]eturn to menu'])
 
     @patch('builtins.input', return_value='Feher Oszkar')
     def test_search_entry(self, input):
