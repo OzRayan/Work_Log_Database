@@ -28,10 +28,12 @@ class TestEntry(unittest.TestCase):
     def test_check(self):
         pass
 
-    @patch('work_log.search_entries', search_query='Oszkar')
-    def test_search_entry(self):
+    @patch('builtins.input', return_value='Feher Oszkar')
+    def test_search_entry(self, input):
         choice = 'c'
         self.assertEqual(work_log.search_entries(choice), 'Feher Oszkar')
+        
+    #   THIS METHOD RETURNS AN INFINITE RESULT LOOP, I DON'T KNOW HOW TO FIX IT
 
 
 if __name__ == '__main__':
