@@ -32,48 +32,62 @@ def init():
 def clear():
     """Clear screen"""
     os.system('cls' if os.name == 'nt' else 'clear')
-    
-    
-def check_date():
-    """Checks date"""
-    while True:
-        try:
-            m, d, y = input('Enter date(MM/DD/YYYY):').split('/')
-            return datetime.datetime(year=int(y), month=int(m), day=int(d))
-        except ValueError:
-            print('Enter a valid date!')
 
 
 def check(prompt):
     """Check the correct input"""
     while True:
+        clear()
         if prompt == 'time':
             try:
+                clear()
                 print('Enter time spent on task')
                 time = int(input('>').strip())
                 if not time:
+                    clear()
                     print('You must fill this field!')
                     continue
                 return time
             except ValueError:
+                clear()
                 print('JUST NUMBERS!!')
         elif prompt == 'name':
+            clear()
             print(f'Enter {prompt}')
             name = input('>')
             if not name:
+                clear()
                 print('You must fill this field!')
             letters = ascii_letters + ' '
+
+            # CHECK AGAIN THE CONTINUITY OF WRONG INPUT!!
+
             if [x for x in name if x not in letters]:
+                clear()
                 print('JUST ALPHABET LETTERS!')
             else:
                 return name
         elif prompt == 'task':
+            clear()
             print(f'Enter {prompt}')
             task = input('>').strip()
             if not task:
+                clear()
                 print('You must fill this field!')
                 continue
             return task
+
+
+def check_date():
+    """Checks date"""
+    while True:
+        clear()
+        try:
+            m, d, y = input('Enter date(MM/DD/YYYY):').split('/')
+            return datetime.datetime(year=int(y), month=int(m), day=int(d))
+        except ValueError:
+            clear()
+            print('Enter a valid date!')
 
 
 def get_option(poz, entry):
@@ -87,6 +101,7 @@ def get_option(poz, entry):
 
 
 def get_option_name(poz, entry):
+    """The result menu options, removes the not wanted option """
     prompt = ['[P]revious', '[N]ext', '[E]nter', '[R]eturn to menu']
     if poz == 0:
         prompt.remove('[P]revious')
@@ -96,7 +111,8 @@ def get_option_name(poz, entry):
 
 
 def add_entry():
-    """Add new entry"""
+    """Add new record"""
+    clear()
     name = check('name')
     task = check('task')
     time = check('time')
@@ -113,10 +129,13 @@ def add_entry():
                   time=time,
                   notes=notes)
         print('This record already exist!')
+        clear()
 
 
 def edit(entry):
+    """Get new input for each field and save it"""
     timestamp = entry.timestamp.strftime(' %B %d, %Y %I:%M%p')
+    clear()
     print('{}\n'
           'Old employee name: {}\n'
           'Old task name: {}\n'
@@ -139,6 +158,7 @@ def edit(entry):
     new_record.notes = new_notes
     new_record.save()
     print('New record saved!')
+    # return new_record
 
 
 def search_entries(choice):
@@ -146,53 +166,69 @@ def search_entries(choice):
     clear()
     while True:
         if choice == 'a':
+            clear()
             search_query = check_date()
             entries = Entry.select().where(Entry.timestamp.contains(search_query))
             if not entries:
+                clear()
                 print('No record was found!')
                 break
             else:
+                clear()
                 result_menu(entries)
                 break
         if choice == 'b':
+            clear()
             start = check_date()
             end = check_date()
             entries = Entry.select().where(Entry.timestamp.between(start, end))
             if not entries:
+                clear()
                 print('No record was found!')
                 break
             else:
+                clear()
                 result_menu(entries)
                 break
         if choice == 'd':
+            clear()
             search_query = input('Search for task: ')
             entries = Entry.select().where(Entry.task.contains(search_query))
             if not entries:
+                clear()
                 print('No record was found!')
                 break
             else:
+                clear()
                 result_menu(entries)
                 break
         if choice == 'c':
+            clear()
             search_query = input('Search for name: ')
             name_list(search_query)
             break
         if choice == 'e':
+            clear()
             search_query = check('time')
             entries = Entry.select().where(Entry.time == search_query)
             if not entries:
+                clear()
                 print('No record was found!')
                 break
             else:
+                clear()
                 result_menu(entries)
                 break
         if choice == 'f':
+            clear()
             search_query = input('Search for notes: ')
             entries = Entry.select().where(Entry.notes.contains(search_query))
             if not entries:
+                clear()
                 print('No record was found!')
                 break
             else:
+                clear()
                 result_menu(entries)
                 break
 
@@ -209,7 +245,9 @@ def name_list(search_query):
     else:
         index = 0
         while True:
+            clear()
             if not entries:
+                clear()
                 print("No record was found!")
                 break
             print(f'Employee name {names[index]}\n')
@@ -226,21 +264,27 @@ def name_list(search_query):
                 print('Choose from the available letters!')
                 continue
             if action == 'p':
+                clear()
                 index -= 1
             if action == 'n':
+                clear()
                 index += 1
             if action == 'r':
                 break
             if action == 'e':
+                clear()
                 entries = Entry.select().where(Entry.name.contains(names[index]))
                 result_menu(entries)
                 continue
 
 
 def result_menu(entries):
+    """Shows the searched entries one by one with detailed description,
+    Navigation included"""
     index = 0
-    clear()
+    index_2 = len(entries)
     while True:
+        clear()
         timestamp = entries[index].timestamp.strftime(' %B %d, %Y %I:%M%p')
         print('{}\n'
               'Employee name: {}\n'
@@ -251,18 +295,17 @@ def result_menu(entries):
                                    entries[index].task,
                                    entries[index].time,
                                    entries[index].notes))
-        print(f'Result {index + 1} of {len(entries)}')
+        print(f'Result {index + 1} of {index_2}')
         print(' '.join(get_option(index, entries)))
         action = input('>').lower().strip()
         if action not in ['p', 'n', 'e', 'd', 'r']:
+            clear()
             print('Choose from the available letters!')
             continue
         if (index + 1) == 1 and action == 'p':
-            clear()
             print('Choose from the available letters!')
             continue
         if (index + 1) == len(entries) and action == 'n':
-            clear()
             print('Choose from the available letters!')
             continue
         if action == 'r':
@@ -275,33 +318,38 @@ def result_menu(entries):
             index -= 1
         if action == 'e':
             clear()
+            # entries[index].update(edit(entries[index]))
             edit(entries[index])
-            continue
+            break
         if action == 'd':
-            print(entries[index].id)
+            # print(entries[index].id)
+            clear()
             if input("Are you sure? [y/N] ").lower() == 'y':
                 entries[index].delete_instance()
-                print(len(entries))
-                # if index == len(entries):
+                # print(len(entries))
+                # if index != 0:
                 #     index -= 1
+                #     index_2 -= 1
             clear()
             print('Record deleted!')
-            continue
+            break
 
 
 def search_menu():
     """Search records"""
-    clear()
     while True:
+        clear()
         for key, value in sub_menu.items():
             print(f'{key}] {value}')
         print('\n')
         action = input('>').lower().strip()
         if action not in sub_menu:
+            clear()
             print('Choose the available letters!')
         elif action == 'g':
             break
         else:
+            clear()
             search_entries(action)
 
 
@@ -310,7 +358,7 @@ def menu_loop():
     choice = None
     while choice != 'q':
         clear()
-        print(f'There is {len(Entry.select())} record(s) in record.db.')
+        print(f'{len(Entry.select())} record(s) in record.db.\n')
         for key, value in menu.items():
             print(f'{key}] {value.__doc__}')
         print('q] Quit')
