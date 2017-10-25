@@ -24,6 +24,12 @@ class TestEntry(unittest.TestCase):
         self.assertEqual(self.task, work_log.Entry.task)
         self.assertEqual(self.time, work_log.Entry.time)
         self.assertEqual(self.notes, work_log.Entry.notes)
+        
+        self.assertEqual(self.timestamp_2, work_log.Entry.timestamp)
+        self.assertEqual(self.name_2, work_log.Entry.name)
+        self.assertEqual(self.task_2, work_log.Entry.task)
+        self.assertEqual(self.time_2, work_log.Entry.time)
+        self.assertEqual(self.notes_2, work_log.Entry.notes)
 
     def test_check(self):
         pass
