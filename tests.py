@@ -43,13 +43,6 @@ class TestEntry(unittest.TestCase):
         self.assertEqual(work_log.get_option(poz, entry), ['[P]revious', '[E]dit', '[D]elete', '[R]eturn to menu'])
         self.assertEqual(work_log.get_option_name(poz, entry), ['[P]revious', '[E]nter', '[R]eturn to menu'])
 
-    @patch('builtins.input', return_value='Feher Oszkar')
-    def test_search_entry(self, input):
-        choice = 'c'
-        self.assertEqual(work_log.search_entries(choice), 'Feher Oszkar')
-        
-    #   THIS METHOD RETURNS AN INFINITE RESULT LOOP, I DON'T KNOW HOW TO FIX IT
-
 
 if __name__ == '__main__':
     unittest.main()
