@@ -11,7 +11,7 @@ from peewee import IntegerField, DateTimeField, CharField, TextField
 db = SqliteDatabase('record.db')
 NAMES = []
 RECORD = []
-LETTERS = 'abcdefghijklmnopqrstuvwxyz  '
+LETTERS = 'abcdefghijklmnopqrstuvwxyz '
 
 
 class Entry(Model):
