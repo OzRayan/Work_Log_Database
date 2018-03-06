@@ -16,7 +16,7 @@ LETTERS = 'abcdefghijklmnopqrstuvwxyz '
 
 class Entry(Model):
     """Entry Model"""
-    timestamp = DateTimeField(default=datetime.datetime.now)
+    timestamp = DateTimeField(default=datetime.date.today)
     name = CharField(max_length=100)
     task = CharField(max_length=255)
     time = IntegerField()
@@ -34,7 +34,7 @@ def init():
 
 def clear_screen():
     """Clear screen"""
-    os.system('cls' if os.name == 'nt' else 'clear_screen')
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def check(prompt, boolean=None):
@@ -101,15 +101,15 @@ def check_date():
         clear_screen()
         try:
             m, d, y = input('Enter date(MM/DD/YYYY):\n>').split('/')
-            return datetime.datetime(year=int(y), month=int(m), day=int(d))
+            return datetime.date(year=int(y), month=int(m), day=int(d))
         except ValueError:
             clear_screen()
             print('Enter a valid date!')
 
 
-def get_option(poz, entry, var=None):
+def get_option(poz, entry, name=None):
     """The result menu options, removes the not wanted option """
-    if var:
+    if name:
         prompt = ['[P]revious', '[N]ext', '[E]nter', '[R]eturn to menu']
     else:
         prompt = ['[P]revious', '[N]ext', '[E]dit', '[D]elete', '[R]eturn to menu']
@@ -140,7 +140,7 @@ def add_entry():
 
 def update_entry(query, index):
     """Get new input for each field and save it"""
-    timestamp = query.timestamp.strftime('%B %d, %Y %I:%M %p')
+    timestamp = query.timestamp.strftime('%B %d, %Y')
     clear_screen()
     print('{}\n'
           'Old employee name: {}\n'
@@ -197,9 +197,7 @@ def validate(query):
 def search_by_date():
     """Search by date"""
     query = check_date()
-    return_value = Entry.select().where((Entry.timestamp.day == query.day)
-                                        & (Entry.timestamp.month == query.month)
-                                        & (Entry.timestamp.year == query.year))
+    return_value = Entry.select().where(Entry.timestamp.contains(query))
     validate(return_value)
 
 
@@ -217,8 +215,10 @@ def search_employee_name():
     RECORD.clear()
     query = check('name', True)
     return_value = Entry.select().where(Entry.name.contains(query))
-    for x in return_value:
-        RECORD.append(x)
+    #
+    # for x in return_value:
+    #     RECORD.append(x)
+
     if not return_value:
         print("Record doesn't exist!")
     for x in return_value:
@@ -226,7 +226,7 @@ def search_employee_name():
             continue
         else:
             NAMES.append(x.name)
-    if len(RECORD) != 0:
+    if len(NAMES) != 0:
         name_list_menu()
 
 
@@ -254,48 +254,52 @@ def search_notes():
 def name_list_menu():
     """Name list"""
     action = None
-    if len(NAMES) == 1:
-        result_menu()
-    elif len(NAMES) == 0:
-        print('No names left in list!')
-    else:
-        index = len(NAMES) - len(NAMES)
-        while action != 'r':
+    # if len(NAMES) == 1:
+    #     result_menu()
+    # elif len(NAMES) == 0:
+    #     print('No names left in list!')
+    index = len(NAMES) - len(NAMES)
+    while action != 'r':
+        clear_screen()
+        if len(NAMES) == 1:
+            index = 0
+        if len(NAMES) == 0:
+            break
+        print('=' * (15 + len(NAMES[index])))
+        print('Employee name: {}'.format(NAMES[index]))
+        print('=' * (15 + len(NAMES[index])))
+        print('Result {} of {}\n'.format(index + 1, len(NAMES)))
+        print(' '.join(get_option(index, NAMES, True)))
+        action = input('>').lower().strip()
+        if action not in ['p', 'n', 'e', 'r']:
+            print('Choose from the available letters!')
+            continue
+        if (index + 1) == 1 and action == 'p':
+            print('Choose from the available letters!')
+            continue
+        if (index + 1) == len(NAMES) and action == 'n':
+            print('Choose from the available letters!')
+            continue
+        if action == 'p':
             clear_screen()
-            print('=' * (len(NAMES[index]) + 15))
-            print('Employee name: {}'.format(NAMES[index]))
-            print('=' * (len(NAMES[index]) + 15) + '\n')
-            print('Result {} of {}'.format(index + 1, len(NAMES)))
-            print(' '.join(get_option(index, NAMES, True)))
-            action = input('>').lower().strip()
-            if action not in ['p', 'n', 'e', 'r']:
-                print('Choose from the available letters!')
-                continue
-            if (index + 1) == 1 and action == 'p':
-                print('Choose from the available letters!')
-                continue
-            if (index + 1) == len(NAMES) and action == 'n':
-                print('Choose from the available letters!')
-                continue
-            if action == 'p':
-                clear_screen()
-                index -= 1
-            if action == 'n':
-                clear_screen()
+            index -= 1
+        if action == 'n':
+            clear_screen()
+            index += 1
+        if action == 'e':
+            clear_screen()
+            RECORD.clear()
+            # name_record = []
+            entries = Entry.select()\
+                .where(Entry.name.contains(NAMES[index]))
+            for x in entries:
+                RECORD.append(x)
+            result_menu()
+            if index == 1:
                 index += 1
-            if action == 'e':
-                clear_screen()
-                RECORD.clear()
-                entries = Entry.select().\
-                    where(Entry.name.contains(NAMES[index]))
-                for x in entries:
-                    RECORD.append(x)
-                result_menu()
-                if index == 1:
-                    index += 1
-                if index == len(NAMES):
-                    index -= 1
-                continue
+            if index == len(NAMES):
+                index -= 1
+            continue
 
 
 def result_menu():
@@ -307,7 +311,7 @@ def result_menu():
         clear_screen()
         if len(RECORD) == 1:
             index = 0
-        timestamp = RECORD[index].timestamp.strftime('%B %d, %Y %I:%M %p')
+        timestamp = RECORD[index].timestamp.strftime('%B %d, %Y')
         print('=' * len(timestamp))
         print('{}\n'
               'Employee name: {}\n'
@@ -352,8 +356,10 @@ def result_menu():
                     index += 1
                 if index == len(RECORD):
                     index -= 1
-                if len(RECORD) == 0:
+                if len(RECORD) == 0 and len(NAMES) != 0:
                     NAMES.remove(name)
+                    break
+                if len(RECORD) == 0:
                     break
             print('Record deleted!')
             continue
@@ -364,6 +370,8 @@ def sub_menu():
     action = None
     while action != 'g':
         clear_screen()
+        if len(Entry.select()) == 0:
+            break
         for key, value in s_menu.items():
             print(' {}] {}'.format(key, value.__doc__))
         print(' g] Return to menu')
