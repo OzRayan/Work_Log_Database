@@ -31,6 +31,7 @@ def init():
     db.connect()
     db.create_tables([Entry], safe=True)
 
+    db.close()
 
 def clear_screen():
     """Clear screen"""
@@ -215,10 +216,6 @@ def search_employee_name():
     RECORD.clear()
     query = check('name', True)
     return_value = Entry.select().where(Entry.name.contains(query))
-    #
-    # for x in return_value:
-    #     RECORD.append(x)
-
     if not return_value:
         print("Record doesn't exist!")
     for x in return_value:
@@ -254,10 +251,6 @@ def search_notes():
 def name_list_menu():
     """Name list"""
     action = None
-    # if len(NAMES) == 1:
-    #     result_menu()
-    # elif len(NAMES) == 0:
-    #     print('No names left in list!')
     index = len(NAMES) - len(NAMES)
     while action != 'r':
         clear_screen()
@@ -289,7 +282,6 @@ def name_list_menu():
         if action == 'e':
             clear_screen()
             RECORD.clear()
-            # name_record = []
             entries = Entry.select()\
                 .where(Entry.name.contains(NAMES[index]))
             for x in entries:
