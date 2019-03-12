@@ -4,8 +4,7 @@ import datetime
 import os
 
 from collections import OrderedDict
-from peewee import Model, SqliteDatabase
-from peewee import IntegerField, DateTimeField, CharField, TextField
+from peewee import *
 
 
 db = SqliteDatabase('record.db')
