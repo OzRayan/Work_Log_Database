@@ -30,8 +30,8 @@ def init():
     """Initialize"""
     db.connect()
     db.create_tables([Entry], safe=True)
-
     db.close()
+
 
 def clear_screen():
     """Clear screen"""
@@ -129,6 +129,7 @@ def add_entry():
     time = check('time')
     print('Enter additional notes(Optional)')
     notes = input('>').strip()
+    # noinspection PyBroadException
     try:
         Entry.create(name=name,
                      task=task,
@@ -258,9 +259,10 @@ def name_list_menu():
             index = 0
         if len(NAMES) == 0:
             break
-        print('=' * (15 + len(NAMES[index])))
+        print_bar = '=' * (15 + len(NAMES[index]))
+        print(print_bar)
         print('Employee name: {}'.format(NAMES[index]))
-        print('=' * (15 + len(NAMES[index])))
+        print(print_bar)
         print('Result {} of {}\n'.format(index + 1, len(NAMES)))
         print(' '.join(get_option(index, NAMES, True)))
         action = input('>').lower().strip()

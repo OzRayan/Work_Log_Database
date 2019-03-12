@@ -332,7 +332,6 @@ class TestNameListMenu(Base):
             self.assertEqual(work_log.name_list_menu(), None)
 
 
-        
 class TestResultMenu(Base):
     names = []
     records = []
